@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HMS — New Patient</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+.step-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+}
+.step {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  position: relative;
+  padding-bottom: 10px;
+}
+.step::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: #e2e8f0;
+}
+.step.active { color: #0A2463; font-weight: 600; }
+.step.active::after { background: #0A2463; }
+.step.done { color: #16a34a; }
+.step.done::after { background: #16a34a; }
+.step-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  margin-bottom: 4px;
+}
+.step.active .step-num { background: #0A2463; color: #fff; }
+.step.done .step-num   { background: #16a34a; color: #fff; }
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  margin-top: 4px;
+}
+.success-box {
+  background: #dcfce7;
+  border: 0.5px solid #86efac;
+  border-radius: 10px;
+  padding: 32px;
+  text-align: center;
+  display: none;
+}
+.success-box h2 { color: #166534; font-size: 20px; margin-bottom: 8px; }
+.success-box p  { color: #15803d; font-size: 13px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><i class="ti ti-building-hospital"></i> City <span>HMS</span></a>
+  <div class="nav-links">
+    <a href="index.html"        class="nav-link">Dashboard</a>
+    <a href="patients.html"     class="nav-link active">Patients</a>
+    <a href="appointments.html" class="nav-link">Appointments</a>
+    <a href="doctors.html"      class="nav-link">Doctors</a>
+    <a href="booking.html"      class="nav-link">Book appointment</a>
+  </div>
+  <div class="nav-user" onclick="Auth.logout()">
+    <div class="nav-avatar">AD</div>
+    <span>Admin</span>
+    <i class="ti ti-logout" style="font-size:14px;opacity:0.6"></i>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>Register new patient</h1>
+    <p>Fill in the details to register a new patient</p>
+  </div>
+
+  <!-- Success Box -->
+  <div class="success-box" id="success-box" style="max-width:580px">
+    <div style="font-size:40px;margin-bottom:12px">✓</div>
+    <h2>Patient registered!</h2>
+    <p id="success-name"></p>
+    <p id="success-id" style="font-size:12px;color:#166534;margin-top:4px"></p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:20px">
+      <button class="btn btn-primary" onclick="resetForm()">Register another</button>
+      <a href="patients.html" class="btn btn-outline">View all patients</a>
+      <a href="booking.html"  class="btn btn-success">Book appointment</a>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div style="max-width:620px" id="patient-form">
+
+    <!-- Step Bar -->
+    <div class="step-bar">
+      <div class="step active" id="step1-bar"><div class="step-num">1</div><div>Personal info</div></div>
+      <div class="step"        id="step2-bar"><div class="step-num">2</div><div>Contact & Medical</div></div>
+      <div class="step"        id="step3-bar"><div class="step-num">3</div><div>Insurance</div></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="card" id="step1">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-user"></i> Personal information</span>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name *</label>
+            <input id="firstName" placeholder="e.g. Rahul" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name *</label>
+            <input id="lastName" placeholder="e.g. Sharma" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date of birth *</label>
+            <input type="date" id="dob" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender *</label>
+            <select id="gender">
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Blood group</label>
+            <select id="bloodGroup">
+              <option value="">Select blood group</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary doctor</label>
+            <select id="primaryDoctor">
+              <option value="">Select doctor</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button class="btn btn-primary" onclick="goStep(2)">
+            Next <i class="ti ti-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="card" id="step2" style="display:none">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-phone"></i> Contact & medical details</span>
+      </div>
+      <div class="card-body">
+        <div class="section-label">Contact</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone * (10 digits)</label>
+            <input id="phone" type="tel" placeholder="9876543210" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="email" type="email" placeholder="patient@email.com" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label class="form-label">Address</label>
+          <textarea id="address" rows="2" placeholder="Full address..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Emergency contact</label>
+            <input id="emergencyContact" type="tel" placeholder="Emergency phone number" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Patient status</label>
+            <select id="patientStatus">
+              <option value="Active">Active</option>
+              <option value="Admitted">Admitted</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-label" style="margin-top:8px">Medical</div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label class="form-label">Known allergies</label>
+          <textarea id="allergies" rows="2" placeholder="e.g. Penicillin, Aspirin, Dust..."></textarea>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <button class="btn btn-outline" onclick="goStep(1)">
+            <i class="ti ti-arrow-left"></i> Back
+          </button>
+          <button class="btn btn-primary" onclick="goStep(3)">
+            Next <i class="ti ti-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="card" id="step3" style="display:none">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-shield-check"></i> Insurance details</span>
+        <span style="font-size:12px;color:#94a3b8">Optional</span>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Insurance provider</label>
+            <input id="insuranceProvider" placeholder="e.g. Star Health, HDFC Ergo" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Policy number</label>
+            <input id="policyNumber" placeholder="e.g. SH-POL-2024-001" />
+          </div>
+        </div>
+        <div style="background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:16px">
+          <p style="font-size:12px;color:#64748b">
+            <i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px"></i>
+            If insurance provider is filled, policy number is required.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <button class="btn btn-outline" onclick="goStep(2)">
+            <i class="ti ti-arrow-left"></i> Back
+          </button>
+          <button class="btn btn-success" style="padding:8px 24px" onclick="registerPatient()">
+            <i class="ti ti-user-plus"></i> Register patient
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script>
+guardAuth();
+
+API.getDoctors().then(docs => {
+  const sel = document.getElementById('primaryDoctor');
+  docs.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d.Id;
+    opt.textContent = `${d.Name} — ${d.Specialization__c || d.Department__c || 'General'}`;
+    sel.appendChild(opt);
+  });
+});
+
+function goStep(n) {
+  if (n === 2) {
+    if (!document.getElementById('firstName').value.trim()) { toast('First name is required', 'error'); return; }
+    if (!document.getElementById('lastName').value.trim())  { toast('Last name is required', 'error'); return; }
+    if (!document.getElementById('dob').value)              { toast('Date of birth is required', 'error'); return; }
+    if (!document.getElementById('gender').value)           { toast('Gender is required', 'error'); return; }
+  }
+  if (n === 3) {
+    const phone = document.getElementById('phone').value.trim();
+    if (!phone)              { toast('Phone number is required', 'error'); return; }
+    if (phone.length !== 10) { toast('Phone must be exactly 10 digits', 'error'); return; }
+  }
+  [1,2,3].forEach(i => {
+    document.getElementById(`step${i}`).style.display = i === n ? 'block' : 'none';
+    document.getElementById(`step${i}-bar`).className = 'step' + (i === n ? ' active' : i < n ? ' done' : '');
+  });
+}
+
+async function registerPatient() {
+  const provider = document.getElementById('insuranceProvider').value.trim();
+  const policy   = document.getElementById('policyNumber').value.trim();
+  if (provider && !policy) { toast('Policy number required when insurance provider is set', 'error'); return; }
+
+  const btn = document.querySelector('.btn-success');
+  btn.textContent = 'Registering...';
+  btn.disabled = true;
+
+  const data = {
+    First_Name__c:        document.getElementById('firstName').value.trim(),
+    Last_Name__c:         document.getElementById('lastName').value.trim(),
+    Date_of_Birth__c:     document.getElementById('dob').value,
+    Gender__c:            document.getElementById('gender').value,
+    Blood_Group__c:       document.getElementById('bloodGroup').value || null,
+    Phone__c:             document.getElementById('phone').value.trim(),
+    Email__c:             document.getElementById('email').value.trim() || null,
+    Address__c:           document.getElementById('address').value.trim() || null,
+    Emergency_Contact__c: document.getElementById('emergencyContact').value.trim() || null,
+    Patient_Status__c:    document.getElementById('patientStatus').value,
+    Allergies__c:         document.getElementById('allergies').value.trim() || null,
+    Primary_Doctor__c:    document.getElementById('primaryDoctor').value || null,
+    Registration_Date__c: new Date().toISOString().split('T')[0]
+  };
+
+  if (provider) {
+    data.Insurance_Provider__c  = provider;
+    data.Insurance_Policy_No__c = policy;
+  }
+
+  try {
+    const result = await API.createRecord('Patient__c', data);
+    document.getElementById('patient-form').style.display = 'none';
+    document.getElementById('success-box').style.display  = 'block';
+    document.getElementById('success-name').textContent   = `${data.First_Name__c} ${data.Last_Name__c} has been registered successfully.`;
+    document.getElementById('success-id').textContent     = `Salesforce ID: ${result.id}`;
+  } catch(e) {
+    toast('Registration failed: ' + e.message, 'error');
+    btn.innerHTML = '<i class="ti ti-user-plus"></i> Register patient';
+    btn.disabled = false;
+  }
+}
+
+function resetForm() {
+  document.getElementById('patient-form').style.display = 'block';
+  document.getElementById('success-box').style.display  = 'none';
+  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  goStep(1);
+}
+</script>
+</body>
+</html>

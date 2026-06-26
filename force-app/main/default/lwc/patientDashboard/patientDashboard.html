@@ -1,0 +1,104 @@
+<template>
+    <lightning-card title="Patient Dashboard" icon-name="standard:patient_list"> 
+        <!-- Loading Spinner --> 
+        <template if:true={isLoading}> 
+            <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner> 
+        </template> 
+        <!-- Error Message --> 
+        <template if:true={hasError}> 
+            <div class="slds-notify slds-notify_alert slds-alert_error" role="alert"> 
+                <span>{errorMessage}</span> 
+            </div> 
+        </template> 
+        <!-- Patient Info Header --> 
+        <template if:true={patient}> 
+            <div class="slds-grid slds-gutters slds-p-around_medium"> 
+                <!-- Patient Details Card --> 
+                <div class="slds-col slds-size_1-of-3"> 
+                    <div class="slds-card slds-card_boundary patient-card"> 
+                        <div class="patient-avatar slds-text-align_center slds-p-top_medium"> 
+                            <lightning-icon icon-name="standard:person_account" 
+                                           size="large"></lightning-icon> 
+                        </div> 
+                        <h2 class="slds-text-heading_medium slds-text-align_center slds-p-top_small"> 
+                            {patient.First_Name__c} {patient.Last_Name__c} 
+                        </h2> 
+                        <p class="slds-text-align_center slds-text-color_weak"> 
+                            {patient.Name} 
+                        </p> 
+                        <div class="slds-p-around_medium"> 
+                            <dl class="slds-dl_horizontal"> 
+                                <dt class="slds-dl_horizontal__label">Blood Group:</dt> 
+                                <dd class="slds-dl_horizontal__detail">{patient.Blood_Group__c}</dd> 
+                                <dt class="slds-dl_horizontal__label">Phone:</dt> 
+                                <dd class="slds-dl_horizontal__detail">{patient.Phone__c}</dd> 
+                                <dt class="slds-dl_horizontal__label">Status:</dt> 
+                                <dd class="slds-dl_horizontal__detail"> 
+                                    <lightning-badge label={patient.Patient_Status__c}></lightning-badge> 
+                                </dd> 
+                                <dt class="slds-dl_horizontal__label">Doctor:</dt> 
+                                <dd class="slds-dl_horizontal__detail">{patient.Primary_Doctor__r.Name}</dd> 
+                            </dl> 
+                        </div> 
+                    </div> 
+                </div> 
+                <!-- Upcoming Appointments --> 
+                <div class="slds-col slds-size_1-of-3"> 
+                    <div class="slds-card slds-card_boundary"> 
+                        <div class="slds-card__header"> 
+                            <h2 class="slds-text-heading_small"> 
+                                <lightning-icon icon-name="standard:event" size="small"></lightning-icon> 
+                                Upcoming Appointments 
+                            </h2> 
+                        </div> 
+                        <div class="slds-card__body"> 
+                            <template if:true={hasAppointments}> 
+                                <template for:each={upcomingAppointments} for:item="appt"> 
+                                    <div key={appt.Id} class="appointment-item slds-p-around_x-small slds-border_bottom"> 
+                                        <p class="slds-text-body_regular slds-text-color_default"> 
+                                            <strong>{appt.Doctor__r.Name}</strong> 
+                                        </p> 
+                                        <p class="slds-text-body_small"> 
+                                            {appt.Appointment_Date__c} | {appt.Appointment_Time__c} 
+                                        </p> 
+                                        <lightning-badge label={appt.Status__c}></lightning-badge> 
+                                    </div> 
+                                </template> 
+                            </template> 
+                            <template if:false={hasAppointments}> 
+                                <p class="slds-text-body_small slds-p-around_medium"> 
+                                    No upcoming appointments. 
+                                </p> 
+                            </template> 
+                        </div> 
+                    </div> 
+                </div> 
+                <!-- Medical History Summary --> 
+                <div class="slds-col slds-size_1-of-3"> 
+                    <div class="slds-card slds-card_boundary"> 
+                        <div class="slds-card__header"> 
+                            <h2 class="slds-text-heading_small"> 
+                                <lightning-icon icon-name="standard:file" size="small"></lightning-icon> 
+                                Medical History 
+                            </h2> 
+                        </div> 
+                        <div class="slds-card__body"> 
+                            <template if:true={hasMedicalHistory}> 
+                                <template for:each={medicalHistory} for:item="rec"> 
+                                    <div key={rec.Id} class="history-item slds-p-around_x-small slds-border_bottom"> 
+                                        <p class="slds-text-body_small"><strong>{rec.Visit_Date__c}</strong></p> 
+                                        <p class="slds-text-body_small">Dr. {rec.Doctor__r.Name}</p> 
+                                        <p class="slds-text-body_small slds-text-color_weak">{rec.Diagnosis__c}</p> 
+                                    </div> 
+                                </template> 
+                            </template> 
+                            <template if:false={hasMedicalHistory}> 
+                                <p class="slds-text-body_small slds-p-around_medium">No medical records found.</p> 
+                            </template> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </template> 
+    </lightning-card> 
+</template> 
